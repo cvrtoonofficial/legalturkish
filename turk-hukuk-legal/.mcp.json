@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "mevzuat_mcp": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["mevzuat-mcp"]
+    },
+    "yargi_mcp": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["yargi-mcp"]
+    },
+    "hukuk-rag": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["hukuk-rag"]
+    }
+  }
+}

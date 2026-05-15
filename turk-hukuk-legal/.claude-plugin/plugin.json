@@ -1,0 +1,8 @@
+{
+  "name": "turk-hukuk-legal",
+  "version": "0.1.0",
+  "description": "Türk hukuku için kapsamlı plugin: sözleşme inceleme (TBK/TTK), gizlilik sözleşmesi triyajı, KVKK + sektörel uyum kontrolü, hukuki yazışma şablonları, risk değerlendirme, toplantı brifingi, tedarikçi sözleşme durumu, günlük brifing, KEP/e-imza akışı, fikri ve sınai haklar paketi (FSEK + SMK 6769).",
+  "author": {
+    "name": "Türk Hukuku Topluluğu"
+  }
+}

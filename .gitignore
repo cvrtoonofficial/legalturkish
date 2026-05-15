@@ -1,0 +1,17 @@
+.DS_Store
+*.swp
+*~
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+**/CLAUDE.local.md
+**/buro.local.md
+**/legal.local.md
+*.local.json
+musvekkil/
+matters/
+dosyalar/
+test-*/
+*.zip
+*.plugin

@@ -1,0 +1,12 @@
+{
+  "name": "turk-hukuk-legal-marketplace",
+  "version": "0.1.0",
+  "description": "Türk hukuku için Claude legal plugin paketi",
+  "plugins": [
+    {
+      "name": "turk-hukuk-legal",
+      "path": "./turk-hukuk-legal",
+      "description": "Türk hukuku — sözleşme inceleme, KVKK, dilekçe, ihtarname, fikri-sınai haklar"
+    }
+  ]
+}
