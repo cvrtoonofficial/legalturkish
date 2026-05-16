@@ -1,10 +1,68 @@
 ---
 name: icerik-kaldirma-bildirim
 description: İnternette telif (FSEK 5846) veya sınai mülkiyet (6769 SMK) ihlali içeren içerikler için kaldırma talebi hazırlar. Türk hukukunda iki ana ray vardır: (1) **5651 sayılı Kanun m.9** (kişilik hakkı + içerik kaldırma; sulh ceza hâkimliği yolu) ve (2) **platform iç uyar-kaldır mekanizmaları** (YouTube Copyright, Meta IP Reports, vb.). Hangi rayda hareket edileceği duruma göre değişir.
+version: 0.2.0
+last_legal_review: 2026-05-16
+required_mcps:
+  - mevzuat_mcp
+  - yargi_mcp
+optional_mcps:
+  - hukuk-rag
+applicable_laws:
+  - 5651
+  - 5846
 ---
 
 # /fikri-sinai-haklar:icerik-kaldirma-bildirim — İçerik Kaldırma Bildirimi
 
+
+
+---
+
+## Adım 0 — Zorunlu MCP Çağrıları
+
+> Bu bölüm `meta/MCP-PROTOCOL.md` çerçevesini uygular. Skill çıktısı **bu çağrılar tamamlanmadan** üretilmez.
+
+### 0.1 Profil okuma
+- Dosya: `~/.claude/plugins/config/turk-hukuk-legal/CLAUDE.md`
+- Yoksa → kullanıcıya `/turk-hukuk-legal:soguk-baslangic-mulakat` çalıştırması önerilir; bu skill yine generic modda çalışır ama çıktı başında **⚠️ Profil yok** uyarısı eklenir.
+
+### 0.2 Mevzuat çekme (`mevzuat_mcp`)
+Bu skill için temel kanun numaraları:
+
+- **Kanun 5651** — anahtar kelimeler: "içerik çıkarma", "erişim engelleme", "yer sağlayıcı"
+- **Kanun 5846** — anahtar kelimeler: "bağlantılı haklar", "ulaşım"
+
+Her madde için: `mevzuat_mcp.search_within_kanun(mevzuat_no="<NO>", keyword="<KAVRAM>")`
+
+Çağrı timeout / boş sonuç verirse: çıktıya `⚠️ MCP_TIMEOUT` etiketi ekle, madde numarasını **doğrulanacak** olarak işaretle.
+
+### 0.3 İçtihat tarama (`yargi_mcp`)
+Önerilen endpoint(ler):
+
+- `yargi_mcp.search_bedesten_unified(...)`
+- `yargi_mcp.search_anayasa_unified(...)`
+
+Profilde tanımlı **yetkili daire** tercihi varsa sorguya dahil et (örn. "Yargıtay 11. HD" — daire yapısı `yargi_mcp.search` ile teyit edilmelidir).
+
+### 0.4 Büro dosyası tarama (`hukuk-rag`, opsiyonel)
+Eğer ilgili müvekkil dosyası varsa:
+```
+mcp__hukuk-rag__hukuk_rag_ara(
+  sorgu="<konuya özgü>",
+  dava="<profile.default_collection>",
+  top_k=6
+)
+```
+
+### 0.5 Çağrı çıktıları → Output ekleri
+Tüm MCP yanıtları **Output / Ekler** bölümünde:
+- **A. Doğrulanmış Mevzuat:** her madde için `[mevzuat_mcp:NNN:m.X]` izli atıf
+- **B. İçtihat Referansları:** `[yargi_mcp:DAİRE:ESAS/KARAR]`
+- **C. Büro Dosya Referansları:** `[hukuk-rag:KOLEKSİYON:chunk_id]`
+- **D. MCP Çağrı Logu:** audit trail (hangi çağrı, ne sonuç verdi)
+
+---
 > ABD'nin **DMCA §512** mekanizmasının Türk hukukundaki birebir karşılığı **yoktur**. Bu skill iki paralel rayı yönetir:
 > 1. **Hukuki ray:** 5651 sayılı Kanun m.9 / m.9-A (içerik çıkarma, erişim engelleme) — sulh ceza hâkimliği başvurusu
 > 2. **Platform rayı:** YouTube, Meta, X, TikTok, vb. dahili uyar-kaldır prosedürleri (FSEK uyarınca hak sahipliği beyanına dayalı)
@@ -151,3 +209,46 @@ Sadece taslak üretme, **eskalasyon işaretle**:
 ## Disclaimer
 
 5651 ve FSEK içtihatı dinamik. Her başvuruda güncel karar tarama yapılmalı.
+
+
+---
+
+## Standart Çıktı Formatı (Hukuki Memo)
+
+Skill nihai çıktısı **`meta/MCP-PROTOCOL.md` §Çıktı Formatı Standartı** şablonunu izler:
+
+```markdown
+# [SKILL] — [Konu]
+
+**Tarih:** {tarih}
+**Profil:** {büro}, {ton}
+**Skill versiyonu:** {version}
+
+## I. Olgular
+## II. Hukuki Çerçeve
+## III. Analiz
+## IV. Sonuç ve Öneri
+## V. Riskler ve Eskalasyon
+
+## Ekler
+### A. Doğrulanmış Mevzuat
+### B. İçtihat Referansları
+### C. Büro Dosya Referansları
+### D. MCP Çağrı Logu
+### E. Eskalasyon Kontrolü
+### F. Versiyon & Doğrulama
+```
+
+## Eskalasyon Tetikleyicileri (otomatik kontrol)
+
+Skill çıktısı üretilirken şu durumlardan biri tespit edilirse **operasyonel çıktı durdurulur**, yerine eskalasyon raporu üretilir:
+
+1. Cezai sorumluluk olasılığı (TCK kapsamı)
+2. KVKK m.6 özel nitelikli veri
+3. Düzenleyici kurum soruşturması (BDDK, KVKK, Rekabet)
+4. AYM / AİHM yolu açık
+5. Sınır ötesi taraf (MÖHUK)
+6. Kamu kurumu / yayıncı muhatap
+7. Acil ihtiyati tedbir gerekliliği
+8. Medya / itibari risk
+

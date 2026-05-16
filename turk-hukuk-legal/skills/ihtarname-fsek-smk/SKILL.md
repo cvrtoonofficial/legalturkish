@@ -167,7 +167,18 @@ Eskalasyon işaretlenirse Claude **taslak ihtarnameyi üretmez**, yerine `## ESK
 **Tebligat adresi doğrulandı mı?** [Evet / Hayır]
 **Hak sahipliği belgeleri ekli mi?** [Liste]
 **Delil ekleri:** [Liste]
-
+version: 0.2.0
+last_legal_review: 2026-05-16
+required_mcps:
+  - mevzuat_mcp
+  - yargi_mcp
+optional_mcps:
+  - hukuk-rag
+applicable_laws:
+  - 5846
+  - 6769
+  - 6098
+  - 1136
 ---
 
 [İhtarname metni — yukarıdaki şablona göre]
@@ -229,3 +240,46 @@ Büro standart şablonlarını `CLAUDE.md` veya ayrı `templates/` klasöründe 
 ## Disclaimer
 
 Bu skill çıktısı **hukuki görüş değildir**. Avukat denetiminden geçmemiş ihtarname tebliğ edilmez. Mevzuat numaraları ve içtihat referansları her kullanımda yeniden doğrulanmalıdır.
+
+
+---
+
+## Standart Çıktı Formatı (Hukuki Memo)
+
+Skill nihai çıktısı **`meta/MCP-PROTOCOL.md` §Çıktı Formatı Standartı** şablonunu izler:
+
+```markdown
+# [SKILL] — [Konu]
+
+**Tarih:** {tarih}
+**Profil:** {büro}, {ton}
+**Skill versiyonu:** {version}
+
+## I. Olgular
+## II. Hukuki Çerçeve
+## III. Analiz
+## IV. Sonuç ve Öneri
+## V. Riskler ve Eskalasyon
+
+## Ekler
+### A. Doğrulanmış Mevzuat
+### B. İçtihat Referansları
+### C. Büro Dosya Referansları
+### D. MCP Çağrı Logu
+### E. Eskalasyon Kontrolü
+### F. Versiyon & Doğrulama
+```
+
+## Eskalasyon Tetikleyicileri (otomatik kontrol)
+
+Skill çıktısı üretilirken şu durumlardan biri tespit edilirse **operasyonel çıktı durdurulur**, yerine eskalasyon raporu üretilir:
+
+1. Cezai sorumluluk olasılığı (TCK kapsamı)
+2. KVKK m.6 özel nitelikli veri
+3. Düzenleyici kurum soruşturması (BDDK, KVKK, Rekabet)
+4. AYM / AİHM yolu açık
+5. Sınır ötesi taraf (MÖHUK)
+6. Kamu kurumu / yayıncı muhatap
+7. Acil ihtiyati tedbir gerekliliği
+8. Medya / itibari risk
+

@@ -1,12 +1,69 @@
 ---
 name: tecavuz-triyaj
 description: Marka, patent, faydalı model, tasarım, coğrafi işaret (SMK 6769) ve telif (FSEK 5846) tecavüzü iddiasını triyaj eder. YEŞİL (eylem önerilir), SARI (uzman görüş alın), KIRMIZI (karmaşık, kıdemli vekil/uzman avukat zorunlu) olarak sınıflandırır. **Hukuki sonuç değil; eylem önerisi.**
+version: 0.2.0
+last_legal_review: 2026-05-16
+required_mcps:
+  - mevzuat_mcp
+  - yargi_mcp
+optional_mcps:
+  - hukuk-rag
+applicable_laws:
+  - 5846
+  - 6769
 ---
 
 # /fikri-sinai-haklar:tecavuz-triyaj — Tecavüz Triyajı
 
 ## Davet
 
+
+
+---
+
+## Adım 0 — Zorunlu MCP Çağrıları
+
+> Bu bölüm `meta/MCP-PROTOCOL.md` çerçevesini uygular. Skill çıktısı **bu çağrılar tamamlanmadan** üretilmez.
+
+### 0.1 Profil okuma
+- Dosya: `~/.claude/plugins/config/turk-hukuk-legal/CLAUDE.md`
+- Yoksa → kullanıcıya `/turk-hukuk-legal:soguk-baslangic-mulakat` çalıştırması önerilir; bu skill yine generic modda çalışır ama çıktı başında **⚠️ Profil yok** uyarısı eklenir.
+
+### 0.2 Mevzuat çekme (`mevzuat_mcp`)
+Bu skill için temel kanun numaraları:
+
+- **Kanun 5846** — anahtar kelimeler: "tecavüz", "bağımsız geliştirme", "mali hak"
+- **Kanun 6769** — anahtar kelimeler: "marka tecavüz", "patent tecavüz", "tasarım tecavüz"
+
+Her madde için: `mevzuat_mcp.search_within_kanun(mevzuat_no="<NO>", keyword="<KAVRAM>")`
+
+Çağrı timeout / boş sonuç verirse: çıktıya `⚠️ MCP_TIMEOUT` etiketi ekle, madde numarasını **doğrulanacak** olarak işaretle.
+
+### 0.3 İçtihat tarama (`yargi_mcp`)
+Önerilen endpoint(ler):
+
+- `yargi_mcp.search_bedesten_unified(...)`
+
+Profilde tanımlı **yetkili daire** tercihi varsa sorguya dahil et (örn. "Yargıtay 11. HD" — daire yapısı `yargi_mcp.search` ile teyit edilmelidir).
+
+### 0.4 Büro dosyası tarama (`hukuk-rag`, opsiyonel)
+Eğer ilgili müvekkil dosyası varsa:
+```
+mcp__hukuk-rag__hukuk_rag_ara(
+  sorgu="<konuya özgü>",
+  dava="<profile.default_collection>",
+  top_k=6
+)
+```
+
+### 0.5 Çağrı çıktıları → Output ekleri
+Tüm MCP yanıtları **Output / Ekler** bölümünde:
+- **A. Doğrulanmış Mevzuat:** her madde için `[mevzuat_mcp:NNN:m.X]` izli atıf
+- **B. İçtihat Referansları:** `[yargi_mcp:DAİRE:ESAS/KARAR]`
+- **C. Büro Dosya Referansları:** `[hukuk-rag:KOLEKSİYON:chunk_id]`
+- **D. MCP Çağrı Logu:** audit trail (hangi çağrı, ne sonuç verdi)
+
+---
 ```
 /fikri-sinai-haklar:tecavuz-triyaj
 ```
@@ -143,3 +200,46 @@ puanlama = {
 ## Disclaimer
 
 Triyaj **eylem önerisi**dir, hukuki sonuç değildir. Her vaka kendi içinde değerlendirilir.
+
+
+---
+
+## Standart Çıktı Formatı (Hukuki Memo)
+
+Skill nihai çıktısı **`meta/MCP-PROTOCOL.md` §Çıktı Formatı Standartı** şablonunu izler:
+
+```markdown
+# [SKILL] — [Konu]
+
+**Tarih:** {tarih}
+**Profil:** {büro}, {ton}
+**Skill versiyonu:** {version}
+
+## I. Olgular
+## II. Hukuki Çerçeve
+## III. Analiz
+## IV. Sonuç ve Öneri
+## V. Riskler ve Eskalasyon
+
+## Ekler
+### A. Doğrulanmış Mevzuat
+### B. İçtihat Referansları
+### C. Büro Dosya Referansları
+### D. MCP Çağrı Logu
+### E. Eskalasyon Kontrolü
+### F. Versiyon & Doğrulama
+```
+
+## Eskalasyon Tetikleyicileri (otomatik kontrol)
+
+Skill çıktısı üretilirken şu durumlardan biri tespit edilirse **operasyonel çıktı durdurulur**, yerine eskalasyon raporu üretilir:
+
+1. Cezai sorumluluk olasılığı (TCK kapsamı)
+2. KVKK m.6 özel nitelikli veri
+3. Düzenleyici kurum soruşturması (BDDK, KVKK, Rekabet)
+4. AYM / AİHM yolu açık
+5. Sınır ötesi taraf (MÖHUK)
+6. Kamu kurumu / yayıncı muhatap
+7. Acil ihtiyati tedbir gerekliliği
+8. Medya / itibari risk
+

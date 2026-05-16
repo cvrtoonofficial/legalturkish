@@ -1,16 +1,26 @@
 {
   "mcpServers": {
     "mevzuat_mcp": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": ["mevzuat-mcp"]
+      "type": "http",
+      "url": "https://mevzuat.surucu.dev/mcp"
     },
     "yargi_mcp": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": ["yargi-mcp"]
+      "type": "http",
+      "url": "https://yargimcp.surucu.dev/mcp"
     },
-    "hukuk-rag": {
+    "literatur_mcp": {
+      "type": "http",
+      "url": "https://literatur-mcp.surucu.dev/mcp"
+    },
+    "yoktez_mcp": {
+      "type": "http",
+      "url": "https://yoktezmcp.fastmcp.app/mcp"
+    },
+    "markapatent_mcp": {
+      "type": "http",
+      "url": "https://markapatent-mcp.fastmcp.app/mcp"
+    },
+    "hukuk_rag": {
       "type": "stdio",
       "command": "uvx",
       "args": ["hukuk-rag"]

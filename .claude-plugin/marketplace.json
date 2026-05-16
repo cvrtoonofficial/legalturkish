@@ -1,12 +1,14 @@
 {
   "name": "turk-hukuk-legal-marketplace",
-  "version": "0.1.0",
-  "description": "Türk hukuku için Claude legal plugin paketi",
+  "version": "0.4.0",
+  "owner": {
+    "name": "cvrtoonofficial"
+  },
   "plugins": [
     {
       "name": "turk-hukuk-legal",
-      "path": "./turk-hukuk-legal",
-      "description": "Türk hukuku — sözleşme inceleme, KVKK, dilekçe, ihtarname, fikri-sınai haklar"
+      "source": "./turk-hukuk-legal",
+      "description": "Türk hukuku için odaklı plugin: 22 skill — Sherlock dava strateji, müzik telif/FSEK, sanatçı sözleşmesi, sınır ötesi fesih (Amuse/İsveç), trafik kazası, idari vergi, profesyonel DOCX çıktısı + 5 Türk MCP entegrasyonu."
     }
   ]
 }

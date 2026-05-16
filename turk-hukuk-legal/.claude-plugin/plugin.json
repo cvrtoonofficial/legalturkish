@@ -1,7 +1,7 @@
 {
   "name": "turk-hukuk-legal",
-  "version": "0.1.0",
-  "description": "Türk hukuku için kapsamlı plugin: sözleşme inceleme (TBK/TTK), gizlilik sözleşmesi triyajı, KVKK + sektörel uyum kontrolü, hukuki yazışma şablonları, risk değerlendirme, toplantı brifingi, tedarikçi sözleşme durumu, günlük brifing, KEP/e-imza akışı, fikri ve sınai haklar paketi (FSEK + SMK 6769).",
+  "version": "0.4.0",
+  "description": "Türk hukuku için odaklı plugin — kullanıcının pratiğindeki dava türlerine (müzik telif/FSEK, sanatçı sözleşmesi, sınır ötesi Amuse/İsveç fesih, trafik kazası, idari vergi) optimize edilmiş 22 skill. Sherlock yöntemiyle dava strateji analizi, profesyonel DOCX çıktısı, 5 Türk MCP entegrasyonu (mevzuat-mcp, yargi-mcp, literatur-mcp, yoktez-mcp, markapatent-mcp) + hukuk-rag büro koleksiyonu. AI yazmadan önce müvekkille diyalog kurar, lehe içtihat tarar, karşı tarafın olası argümanlarını öngörür.",
   "author": {
     "name": "Türk Hukuku Topluluğu"
   }
